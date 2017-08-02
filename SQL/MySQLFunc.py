@@ -52,9 +52,19 @@ def AddBlock(dat):
 	%s,%s,%s,%s,%s,%s,%s,%s
 	);
 	'''	
-	LastBlockCount = '''SELECT COUNT(*) from Blocks;'''
+	
+	BlocksTransactionsAdd = '''insert into Blocks_Transactions values(%s,%s,%s,%s);'''
+	BlocksTransactionsInputAdd = '''insert into Blocks_Transactions_Input values(%s,%s,%s,%s,%s,%s);'''
+	BlocksTransactionsInputOutput = '''insert into Blocks_Transactions_Output values(%s,%s,%s,%s);'''
+
+	LastBlockCount = '''SELECT COUNT(*) as last from Blocks;'''
 	tmp = block.ReturnAllToList()
-	cursor = tmpBase.query(BlocksAdd,(tmp['BlockSize'],tmp["BlockHeader"]['version'],tmp["Magic"],tmp["BlockHeader"]['previousHash'],tmp['BlockHeader']['merkleRoot'],bh.GetDiff(tmp["BlockHeader"]['nbits']),tmp["BlockHeader"]['nonce'],datetime.datetime.utcfromtimestamp(tmp["BlockHeader"]['ntime']).strftime('%Y-%m-%dT%H:%M:%SZ'),))
+	cursor = tmpBase.query(BlocksAdd,(tmp['BlockSize'],tmp["BlockHeader"]['version'],tmp["Magic"],tmp["BlockHeader"]['previousHash'],tmp['BlockHeader']['merkleRoot'],bh.GetDiff(tmp["BlockHeader"]['nbits']),tmp["BlockHeader"]['nonce'],datetime.datetime.utcfromtimestamp(tmp["BlockHeader"]['ntime']).strftime('%Y.%m.%d %H:%M:%S GMT0'),))
+	cursor.close()
+    	cursor = tmpBase.query(LastBlockCount)
+	LastBlock = 0
+	for (last) in cursor:
+	 LastBlock = last
 	cursor.close()
 	for txs in tmp["Txs"]:
 	 tmptxs = txs.GetAllAsList()
@@ -63,9 +73,9 @@ def AddBlock(dat):
 		pass
 	 for i in tmptxs['TxOutputs']:
 		pass
-	  # Add bluh-bluh
+	 # Add bluh-bluh
 	tmpBase.commit()
 	tmpBase.close()
 	tmpBase = None
-	
+	block = None
 
