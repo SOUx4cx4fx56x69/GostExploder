@@ -1,4 +1,4 @@
-from util import *
+from blocks.util import *
 
 def calculate_target(nBits):
     # cf. CBigNum::SetCompact in bignum.h
@@ -12,6 +12,12 @@ def target_to_difficulty(target):
 
 def GetDiff(nbits):
   return target_to_difficulty(calculate_target(nBits))
+
+def hashstr(string):
+	return hashStr(string)
+def FromSatToFull(sat):
+	return sat / 10**8.
+
 
 class Tx:
 	def __init__(self, blockchain):
