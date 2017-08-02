@@ -8,8 +8,9 @@ def parse(path):
 	blockchain.seek(0, 2)
 	fSize = blockchain.tell() - 80 #Minus last Block header size for partial file
 	blockchain.seek(0, 0)
-	block = bh.BlockReader(blockchain)
-	while counter < 1000:			
+	block = None
+	while counter < 1000:	
+		block = bh.BlockReader(blockchain)		
 		continueParsing = not block.endOfFile
 		if continueParsing:
 			tmp = block.ReturnAllToList()
