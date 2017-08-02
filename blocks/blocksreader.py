@@ -1,5 +1,18 @@
 from util import *
 
+def calculate_target(nBits):
+    # cf. CBigNum::SetCompact in bignum.h
+    shift = 8 * (((nBits >> 24) & 0xff) - 3)
+    bits = nBits & 0x7fffff
+    sign = -1 if (nBits & 0x800000) else 1
+    return sign * (bits << shift if shift >= 0 else bits >> -shift)
+
+def target_to_difficulty(target):
+    return ((1 << 224) - 1) * 1000 / (target + 1) / 1000.0
+
+def GetDiff(nbits):
+  return target_to_difficulty(calculate_target(nBits))
+
 class Tx:
 	def __init__(self, blockchain):
 		self.version = uint4(blockchain)
@@ -16,7 +29,6 @@ class Tx:
 				self.outputs.append(output)	
 		self.lockTime = uint4(blockchain)
 	def GetAllAsList(self):
-		print self.inputs[0].GetAllAsList()
 		return {
 		"TxInput":self.inputs,
 		"TxOutputs":self.outputs,
@@ -88,7 +100,7 @@ class BlockReader:
 		self.endOfFile=False
 	 else:			# if end of file
 		self.endOfFile = True
-		return True
+		return False
 		
 	 if self.hasLength(blockchain, self.blocksize):
 		self.setHeader(blockchain)
