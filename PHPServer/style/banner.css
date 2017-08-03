@@ -1,0 +1,144 @@
+#banner{
+    background-color:white;
+    background-color:snow;
+    background-image:url(images/an.gif);
+    background-repeat:repeat-x;
+    width:100%;
+    left:0;
+    top:0;
+    overflow:hidden;
+    min-height:40px;
+    max-height:50px;
+    display:block;
+    position:absolute;
+    /*border-radius:5px;*/
+    border-bottom:2px solid rgba(155, 155, 247, 0.78);
+    box-shadow: inset 0px 0px 10px rgb(137, 175, 245);
+}
+#banner ul:not(.rightnav) li{
+    margin-right:10px;
+    margin-top:5px;
+}#banner a{
+/*    border:3px inset grey; */
+
+    transition-property:color,border-bottom;
+    transition-duration: 0.5s,0.6s;
+    transition-delay: 0.2s;
+    margin:0;
+}
+#banner ul:not(.rightnav){
+ list-style-type: none;
+ width:480px;
+
+ margin-top:-10px;
+ height:50px;
+}#banner ul[class='rightnav']{
+    float:right;
+    margin-top:-66px;
+    height:50px;
+}
+#banner ul:not([class='rightnav']) li:not([class='rightnav']):after,#banner ul[class='rightnav'] li:first-child:after{
+    content: "  /  ";
+}#banner ul:not([class='rightnav']) li:last-child:after{
+    content:none;
+}#banner h1{
+    position: absolute;
+    top: 0;
+    bottom:30px;
+    right:50%;
+    left:50%;
+    width:220px;
+    height:30px;
+    font-size:1.5em;
+    font-family:Arial,sans-serif;
+}
+#banner li , #banner a:not(.banner-icons){
+    clear:both;
+    color:white;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-family:czoinks,Arial,sans-serif;
+    font-size:1.3em;
+    text-decoration: none;
+    display:inline-block;
+}#banner span[onclick='turnmenu()']{
+    width:32px;
+    height:32px;
+    display:block;
+    margin-right:25px;
+    background-size:16px 16px;
+    background-repeat: no-repeat;
+    background-color:rgba(0, 0, 0, 0.15);
+    border-radius: 100%;
+    background-position: center;
+    background-image:url('images/turnbutton.png');
+    opacity:0.6;
+    transition-duration: all;
+    transition-delay: 0.1s;
+    cursor:pointer;
+}#banner span[onclick='turnmenu()']:hover{
+    transform:rotate(5deg);
+    opacity:1;
+}
+/*icons*/
+#banner .banner-icons{
+    display:block;
+    width:32px;
+    height:32px;
+    border-radius:100%;
+    background-color:rgba(0, 0, 0, 0.15);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size:cover;
+    border-radius: 100%;
+
+}
+#banner .banner-icons-trade{
+    opacity:0.8;
+    background-image:url(images/icons/trade.png);
+}#banner .banner-icons-trade:hover{
+    opacity:1;
+}
+
+#banner .banner-icons-pools{
+    opacity:0.8;
+    background-image:url(images/icons/mining.png);
+}#banner .banner-icons-pools:hover{
+    opacity:1;
+}
+#banner .banner-icons-stats{
+    opacity:0.8;
+    background-image:url(images/icons/stats.png);
+}#banner .banner-icons-stats:hover{
+    opacity:1;
+}
+#banner .banner-icons-home{
+    opacity:0.8;
+    background-image:url(images/icons/main.png);
+}#banner .banner-icons-home:hover{
+    opacity:1;
+}
+#banner a:hover, #banner a:not(.banner-icons):hover{
+    border-bottom: 5px solid darkcyan;
+    color:#2a17da;
+}#banner a:focus{
+    color:darkblue;
+    border-bottom: 5px solid black; 
+}#banner .active{
+    border-bottom:5px groove darkgrey;
+}
+.brand{
+    
+}
+span[onclick='turnmenu()']:after
+{
+ content:none;
+}
+.rightnav input{
+    height:50%;
+    right:0;
+    position:absolute;
+    background-color:#f5f5f5;
+}.rightnav input:hover{
+ background-color:white;   
+}

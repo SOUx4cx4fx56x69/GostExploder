@@ -1,0 +1,14 @@
+@font-face{
+    font-family:Tessalate;
+    src:url("fonts/Tessalate.ttf");
+    font-style:normal;
+}
+@font-face{
+    font-family:czoinks;
+    src:url("fonts/czoinks.ttf");
+    font-style:normal;
+}@font-face{
+    font-family:future;
+    src:url("fonts/FuturaRegular.ttf");
+    font-style:bold;
+}

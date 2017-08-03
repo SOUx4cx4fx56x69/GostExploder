@@ -1,0 +1,59 @@
+.menu{
+    background-color:rgba(46, 92, 183, 0.57);
+    max-width: 320px;
+    min-height:150px;
+ /*   position:fixed;
+    left:0;
+    top:0;*/
+    margin-left:-8px;
+    border:2px solid  rgba(0, 0, 0, 0.31);
+    overflow: auto;
+    border-radius:12%;
+    clear:both;
+    position:fixed;
+    right:0;
+    display:none;
+}.menu ul{
+    float:left;
+    text-align:left;
+    position:relative;
+    left:-40px;
+    display:block;
+    top:-40px;
+
+}.menu ul > li{
+    list-style-type: none;
+}.menu ul > li:nth-child(1){
+
+}
+li > .menu-icons{
+    background-size:cover;
+    background-repeat: no-repeat
+    border-radius:100%;
+    width:24px;
+    height:24px;
+    display:block;
+    float:right;
+    position:relative;
+    left:6px;
+    bottom:1px;
+}
+
+.menu li > a{
+    text-transform: uppercase;
+    text-decoration: none;
+    color:#ebff00;
+    margin-left:6px;
+}.menu hr{
+margin-bottom:25px;
+}
+.menu-icons-home{
+    background-image:url("images/home.png");
+}.menu-icons-coin{
+    background-image:url("images/icons/coin.png");
+}.menu-icons-mining{
+   background-image:url("images/icons/mining.png");
+}.menu-icons-settings{
+   background-image:url("images/icons/settings.png");
+}
+
