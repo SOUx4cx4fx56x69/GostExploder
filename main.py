@@ -40,6 +40,8 @@ def StartThreads():
 def main():
 	ReadConf()
 	print "\033]0;GostcoinExplorer\007"+COLORSBASH["GREEN"]+"Start threads now."+COLORSBASH["END"]
-	StartThreads()	
+	StartThreads()
+	while 1:
+	 pass	
 
 main()

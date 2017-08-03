@@ -1,18 +1,23 @@
 import MYSQL as SQL
-import sys
+import sys,time,signal
 sys.path.append( "./blocks/" )
 import blocksreader as bh
-import time
+ 
 
 from datetime import datetime
 from colors import *
+ClosedThreads = False
 
+def CloseThreads(a=0,b=0):
+	ClosedThreads=True
+	print COLORSBASH["YELLOW"]+"Close SQL thread...."+COLORSBASH["END"]
 
 def ReadingDat(datfile):
 	return AddBlock(datfile)
 
-
 def Thread(datfile):
+	signal.signal(signal.SIGUSR1,CloseThreads)
+	global ClosedThreads
 	tmpBase = SQL.MySQL()
 	cursor = tmpBase.query("select conf_value from settings where conf_name='lseek';",())
 	lseek = 0
@@ -28,7 +33,8 @@ def Thread(datfile):
 	tmpBase.destruct()
 	cursor = None
 	tmpBase = None
-	while 1:
+
+	while not ClosedThreads:
 	 if ReadingDat(datfile) == False:
 		print COLORSBASH["GREEN"]+"Synchroned!"+COLORSBASH["END"]
 		time.sleep(10)
