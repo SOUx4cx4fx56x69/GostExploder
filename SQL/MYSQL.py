@@ -19,8 +19,6 @@ class MySQL:
  
  def init_sql(self,file):
   conf = self.read_config(file)
-  if conf.get('MySQL','on') != True:
-	return False
   self.host = conf.get('MySQL','host')
   self.port = conf.get('MySQL','port')
   self.user = conf.get('MySQL','user')
@@ -28,7 +26,7 @@ class MySQL:
   self.database = conf.get('MySQL','database')
 
  def connect(self):
-  try:
+  try:   
    self.sql = mysql.connector.connect(user=self.user, password=self.password,
                                  host=self.host,port=self.port,
                                  database=self.database)
@@ -82,6 +80,7 @@ class MySQL:
  def __init__(self,file="config.ini"):
   self.init_sql(file)
   self.connect()
+  
   atexit.register(self.destruct)
 
  

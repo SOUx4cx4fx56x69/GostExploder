@@ -11,7 +11,7 @@ def target_to_difficulty(target):
     return ((1 << 224) - 1) * 1000 / (target + 1) / 1000.0
 
 def GetDiff(nbits):
-  return target_to_difficulty(calculate_target(nBits))
+  return target_to_difficulty(calculate_target(nbits))
 
 def hashstr(string):
 	return hashStr(string)
@@ -90,23 +90,23 @@ class BlockHeader:
 		}
 
 class BlockReader:
-	def __init__(self,blockchain,seek=0):
-	 self.endOfFile=True
-	 self.lastSeek = seek
+	def __init__(self,blockchain):
+	 self.endOfFile=False
+	 #self.lastSeek = seek
 	 self.magicNum = 0
 	 self.blocksize = 0
 	 self.blockheader = {}
 	 self.txCount = 0
 	 self.Txs = []
-	 if seek != 0:
-		blockhasin.seek(seek)
+	# if seek != 0:
+	#	blockchain.seek(int(seek))
 	 if self.hasLength(blockchain, 8):	#If has 8 byte length(8 chars)
 		self.magicNum = uint4(blockchain)
 		self.blocksize = uint4(blockchain)
 		self.endOfFile=False
 	 else:			# if end of file
 		self.endOfFile = True
-		return False
+		return None
 		
 	 if self.hasLength(blockchain, self.blocksize):
 		self.setHeader(blockchain)
@@ -117,8 +117,9 @@ class BlockReader:
 		 tx = Tx(blockchain)
 		 self.Txs.append(tx)
 	 else:
-		 self.lastSeek = blockhain.tell()
+		 #self.lastSeek = blockhain.tell()
 		 self.endOfFile = True
+		 return None
 	
 	def getBlocksize(self):
 		return self.blocksize
@@ -131,17 +132,21 @@ class BlockReader:
 		blockchain.seek(curPos)
 
 		tempBlockSize = fileSize - curPos
-		self.lastSeek = blockchain.tell()
+		#self.lastSeek = blockchain.tell()
 		if tempBlockSize < size:
 			return False
 		return True
 
 	def setHeader(self, blockchain):
+		if self.endOfFile == True:
+			return False
 		tmpheaderObject = BlockHeader(blockchain)
 		self.blockHeader = tmpheaderObject.GetAllAsList()
 		tmpheaderObject=None
 
 	def ReturnAllToList(self):
+		if self.endOfFile == True:
+			return False
 		return {
 			"Magic":self.magicNum,
 			"BlockSize":self.blocksize,
