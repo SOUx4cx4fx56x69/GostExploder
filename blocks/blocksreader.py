@@ -8,13 +8,14 @@ def calculate_target(nBits):
     return sign * (bits << shift if shift >= 0 else bits >> -shift)
 
 def target_to_difficulty(target):
-    return ((1 << 224) - 1) * 1000 / (target + 1) / 1000.0
+    return ((1 << 224) - 1) * 1000 / (target + 1.) / 1000.0
 
 def GetDiff(nbits):
   return target_to_difficulty(calculate_target(nbits))
 
 def hashstr(string):
 	return hashStr(string)
+
 def FromSatToFull(sat):
 	return sat / 10**8.
 
