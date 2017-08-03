@@ -17,9 +17,7 @@ def CloseThreads(a=0,b=0):
 def ReadingDat(datfile):
 	return AddBlock(datfile)
 
-def Thread(datfile):
-	signal.signal(signal.SIGUSR1,CloseThreads)
-	global ClosedThreads
+def SetFseek(datfile):
 	tmpBase = SQL.MySQL()
 	cursor = tmpBase.query("select conf_value from settings where conf_name='lseek';",())
 	lseek = 0
@@ -27,19 +25,24 @@ def Thread(datfile):
 	 lseek=int(conf_value[0])
 	cursor.close()
 	datfile.seek(0,2)
-	last_size = datfile.tell()
+	last_size = datfile.tell() # maybe later... for other...
+	print "Buff bytes of blockchain: "+ str(last_size)
 	datfile.seek(0,0)
 	if lseek > 0:
 		datfile.seek(lseek,0)
-	print "Buff bytes of blockchain: "+ str(last_size)
 	tmpBase.destruct()
 	cursor = None
 	tmpBase = None
 
+def Thread(datfile):
+	signal.signal(signal.SIGUSR1,CloseThreads)
+	global ClosedThreads
+	SetFseek(datfile)
 	while not ClosedThreads:
 	 if ReadingDat(datfile) == False:
 		print COLORSBASH["GREEN"]+"Synchroned!"+COLORSBASH["END"]
-		time.sleep(10)
+		time.sleep(30)
+		SetFseek(datfile)
 	 
 
 def InstallTables():
@@ -95,8 +98,9 @@ def AddBlock(dat):
 	addLastSeek = '''update settings set conf_value='%s' where conf_name='lseek';'''
 	LastBlockCount = '''SELECT COUNT(*) as last from Blocks;'''
 	tmp = block.ReturnAllToList()
-	if tmp == False:
+	if tmp == False or tmp['BlockSize'] ==0 or tmp["BlockHeader"]['version']==0:
 		return False
+	
 	cursor = tmpBase.query(BlocksAdd,(tmp['BlockSize'],tmp["BlockHeader"]['version'],tmp["Magic"],tmp["BlockHeader"]['previousHash'],tmp['BlockHeader']['merkleRoot'],bh.GetDiff(tmp["BlockHeader"]['nbits']),tmp["BlockHeader"]['nonce'],datetime.utcfromtimestamp(tmp["BlockHeader"]['ntime']).strftime('%Y.%m.%d %H:%M:%S GMT0'),))
 	cursor.close()
     	cursor = tmpBase.query(LastBlockCount,())
