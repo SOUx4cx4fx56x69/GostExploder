@@ -80,11 +80,16 @@ value double unsigned,
 scriptlen int(255) unsigned 
 );''')
 	INSTALLING.append('''create table settings(conf_name varchar(255),conf_value varchar(255));''')
-	INSTALLING.append('''insert into settings values('lseek', '0' );''')
+	#INSTALLING.append('''insert into settings values('lseek', '0' );''')
 	for i in INSTALLING:	
 	 cursor = tmpBase.query(i,())
 	 cursor.close()
-	#tmpBase.commit()
+	#ShitCode
+	tmpBase.destruct()
+	tmpBase = SQL.MySQL()
+	cursor = tmpBase.query('''insert into settings values('lseek', '0' );''',())
+	cursor.close()	
+	tmpBase.commit()
 	tmpBase.destruct()
 	tmpBase = None	
 	return True
