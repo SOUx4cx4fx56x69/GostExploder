@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import MYSQL as SQL
 import sys,time,signal
 sys.path.append( "./blocks/" )
 import blocksreader as bh
- 
+import base64
 
 from datetime import datetime
 from colors import *
@@ -42,42 +44,32 @@ def Thread(datfile):
 
 def InstallTables():
 	tmpBase = SQL.MySQL()
-	INSTALLING='''create table Blocks(id bigint(255) unsigned PRIMARY KEY AUTO_INCREMENT, 
-		    size int(255) unsigned,
-		    version int(255) unsigned,
-	            magic varchar(10),
-			prevhash varchar(64),
-			MerkleRoot varchar(64),
-			Difficulty double unsigned,
-			nonce int(255) unsigned,
-			date varchar(24)
-);
-create table Blocks_Transactions(id bigint(255) unsigned PRIMARY KEY AUTO_INCREMENT,
+
+	INSTALLING = []
+	INSTALLING.append("create table Blocks(id bigint(255) unsigned PRIMARY KEY AUTO_INCREMENT,     size int(255) unsigned,    version int(255) unsigned,            magic varchar(10),prevhash varchar(64),MerkleRoot varchar(64),Difficulty double unsigned,nonce int(255) unsigned,date varchar(24));");
+	INSTALLING.append('''create table Blocks_Transactions(id bigint(255) unsigned PRIMARY KEY AUTO_INCREMENT,
 TxVersion int unsigned,
 Count_inputs bigint(255) unsigned,
 Count_outputs bigint(255) unsigned,
 locktime int unsigned
-);
-create table Blocks_Transactions_Input(from_id bigint(255) unsigned,
+);''')
+	INSTALLING.append('''create table Blocks_Transactions_Input(from_id bigint(255) unsigned,
 txOutId int(255) unsigned,
 seqNo int(255) unsigned,
 prevhash varchar(64),
 scriptSig varchar(255),
 scriptlen int(255) unsigned 
-);
-create table Blocks_Transactions_Output(from_id bigint(255) unsigned,
+);''')
+	INSTALLING.append('''create table Blocks_Transactions_Output(from_id bigint(255) unsigned,
 pubkey varchar(255),
 value double unsigned,
 scriptlen int(255) unsigned 
-);
-create table settings(conf_name varchar(255),conf_value varchar(255));
-insert into settings values('lseek', '0' );
-
-'''
-
-	cursor = tmpBase.query(INSTALLING,())
-	INSTALLING=''
-	#cursor.close()
+);''')
+	INSTALLING.append('''create table settings(conf_name varchar(255),conf_value varchar(255));''')
+	INSTALLING.append('''insert into settings values('lseek', '0' );''')
+	for i in INSTALLING:	
+	 cursor = tmpBase.query(i,())
+	 cursor.close()
 	tmpBase.commit()
 	tmpBase.destruct()
 	tmpBase = None	
@@ -95,7 +87,7 @@ def AddBlock(dat):
 	(
 	%s,%s,%s,%s,%s,%s,%s,%s
 	);
-	'''	
+	'''
 	
 	BlocksTransactionsAdd = '''insert into Blocks_Transactions(TxVersion,Count_inputs,Count_outputs,locktime) values(%s,%s,%s,%s);'''
 	BlocksTransactionsInputAdd = '''insert into Blocks_Transactions_Input values(%s,%s,%s,%s,%s,%s);'''
@@ -119,7 +111,8 @@ def AddBlock(dat):
 	 cursor.close()
 	 for i in tmptxs['TxInput']:
 	  t = i.GetAllAsList()	  
-	  cursor = tmpBase.query(BlocksTransactionsInputAdd,(LastBlock,t['txOutId'],t['seqNo'],bh.hashstr(t['PrevHash']),bh.hashstr(t['scriptSig']),t['scriptLen'],))
+	  scriptSig = base64.b64encode(t['scriptSig'])
+	  cursor = tmpBase.query(BlocksTransactionsInputAdd,(LastBlock,t['txOutId'],t['seqNo'],bh.hashstr(t['PrevHash']),scriptSig,t['scriptLen'],))
 	  cursor.close()
 	 for i in tmptxs['TxOutputs']:
 	  t = i.GetAllAsList()

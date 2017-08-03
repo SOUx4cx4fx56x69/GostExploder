@@ -25,8 +25,12 @@ def ReadConf(file="config.ini",prefix="./configs/"):
 		print COLORSBASH["PURPLE"]+"Start instaling" +COLORSBASH["END"]
 		SQL.InstallTables()
 		config.set("MySQL","installed","true")
+		tmpfile = open(prefix+file,"wb")
+		config.write(tmpfile)
+		tmpfile.close()
 	global datfile
 	datfile = config.get("datfile","path")
+
 	return True
 
 def StartThreads():
