@@ -1,0 +1,50 @@
+@-webkit-keyframes Loader{
+    from{
+    transform: rotate(30deg);
+    }
+    10%{
+    transform: rotate(72deg);    
+    }20%{
+        transform: rotate(-72deg); 
+    }30%{
+        transform: rotate(144deg); 
+    }50%{
+      transform: rotate(320deg);   
+      background-position:60% 25%;
+    }80%{
+        transform: rotate(-320deg);
+    }
+    to{
+     transform: rotate(720deg);   
+    }
+ 
+}
+@keyframes Loader{
+    from{
+    transform: rotate(30deg);
+    }
+    10%{
+    transform: rotate(72deg);    
+    }20%{
+        transform: rotate(-72deg); 
+    }30%{
+        transform: rotate(144deg); 
+    }50%{
+      transform: rotate(320deg);   
+        background-position:60% 25%;
+    }80%{
+        transform: rotate(-320deg);
+    }
+    to{
+     transform: rotate(720deg);   
+    }
+}
+
+@keyframes BackGroundEffect{
+    from{
+    }50%{
+    }80%{
+    }
+    to{
+    }
+}
