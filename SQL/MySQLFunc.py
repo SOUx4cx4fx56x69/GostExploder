@@ -50,7 +50,7 @@ def Thread(datfile):
 	 if ReadingDat(datfile) == False:
 		print COLORSBASH["GREEN"]+"Synchroned!"+COLORSBASH["END"]
 		LastSize = GetSize(datfile)
-		while LastSize <= GetSize(datfile)+8:
+		while LastSize <= GetSize(datfile):
 			print COLORSBASH["WHITE"]+"Wait other blocks"+COLORSBASH["END"]
 			time.sleep(30)
 		SetFseek(datfile)
@@ -110,6 +110,8 @@ def AddBlock(dat):
 	LastBlockCount = '''SELECT COUNT(*) as last from Blocks;'''
 	tmp = block.ReturnAllToList()
 	if tmp == False or tmp['BlockSize'] ==0 or tmp["BlockHeader"]['version']==0:
+		cursor = tmpBase.query(addLastSeek,(dat.tell(),))
+		cursor.close()
 		return False
 	
 	cursor = tmpBase.query(BlocksAdd,(tmp['BlockSize'],tmp["BlockHeader"]['version'],tmp["Magic"],tmp["BlockHeader"]['previousHash'],tmp['BlockHeader']['merkleRoot'],bh.GetDiff(tmp["BlockHeader"]['nbits']),tmp["BlockHeader"]['nonce'],datetime.utcfromtimestamp(tmp["BlockHeader"]['ntime']).strftime('%Y.%m.%d %H:%M:%S GMT0'),))
