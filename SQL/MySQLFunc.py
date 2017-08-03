@@ -17,6 +17,14 @@ def CloseThreads(a=0,b=0):
 def ReadingDat(datfile):
 	return AddBlock(datfile)
 
+def GetSize(datfile):
+		TmpSize = datfile.tell()
+		datfile.seek(0,2)
+		LastTell = datfile.tell()
+		datfile.seek(TmpSize,0)
+		return LastTell
+
+
 def SetFseek(datfile):
 	tmpBase = SQL.MySQL()
 	cursor = tmpBase.query("select conf_value from settings where conf_name='lseek';",())
@@ -41,7 +49,10 @@ def Thread(datfile):
 	while not ClosedThreads:
 	 if ReadingDat(datfile) == False:
 		print COLORSBASH["GREEN"]+"Synchroned!"+COLORSBASH["END"]
-		time.sleep(30)
+		LastSize = GetSize(datfile)
+		while LastSize <= GetSize(datfile)+8:
+			print COLORSBASH["WHITE"]+"Wait other blocks"+COLORSBASH["END"]
+			time.sleep(30)
 		SetFseek(datfile)
 	 
 
