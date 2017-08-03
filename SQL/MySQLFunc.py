@@ -84,7 +84,7 @@ scriptlen int(255) unsigned
 	for i in INSTALLING:	
 	 cursor = tmpBase.query(i,())
 	 cursor.close()
-	tmpBase.commit()
+	#tmpBase.commit()
 	tmpBase.destruct()
 	tmpBase = None	
 	return True
