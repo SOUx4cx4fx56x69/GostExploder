@@ -49,10 +49,12 @@ def Thread(datfile):
 	while not ClosedThreads:
 	 if ReadingDat(datfile) == False:
 		print COLORSBASH["GREEN"]+"Synchroned!"+COLORSBASH["END"]
-		LastSize = GetSize(datfile)
-		while LastSize <= GetSize(datfile):
-			print COLORSBASH["WHITE"]+"Wait other blocks"+COLORSBASH["END"]
-			time.sleep(30)
+		#LastSize = GetSize(datfile)
+		#while LastSize <= GetSize(datfile):
+		#	print LastSize,GetSize(datfile)
+		#	print COLORSBASH["WHITE"]+"Wait other blocks"+COLORSBASH["END"]
+		time.sleep(60)
+		print COLORSBASH["PURPLE"]+"Set seek\n"+COLORSBASH["END"]
 		SetFseek(datfile)
 	 
 
