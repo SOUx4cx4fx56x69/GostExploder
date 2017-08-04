@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-
+from configparser import ConfigParser
 import MYSQL as SQL
 import sys,time,signal
 sys.path.append( "./blocks/" )
+sys.path.append( "./RPC/" )
 import blocksreader as bh
 import base64
+import RPC
 
 from datetime import datetime
 from colors import *
@@ -41,19 +43,33 @@ def SetFseek(datfile):
 	tmpBase.destruct()
 	cursor = None
 	tmpBase = None
+def RPCInit(path="./configs/config.ini"):
+	config = ConfigParser()
+	config.read(path)
+	Host = config.get('RPC','host')
+	Port = int(config.get('RPC','port'))
+	User = config.get('RPC','user')
+	Pass = config.get('RPC','password')
+	MyRPC = RPC.RPC(Host,Port,User,Pass)
+	return MyRPC
 
 def Thread(datfile):
 	signal.signal(signal.SIGUSR1,CloseThreads)
 	global ClosedThreads
+	MyRPC = RPCInit()
 	SetFseek(datfile)
 	while not ClosedThreads:
 	 if ReadingDat(datfile) == False:
 		print COLORSBASH["GREEN"]+"Synchroned!"+COLORSBASH["END"]
-		#LastSize = GetSize(datfile)
-		#while LastSize <= GetSize(datfile):
-		#	print LastSize,GetSize(datfile)
-		#	print COLORSBASH["WHITE"]+"Wait other blocks"+COLORSBASH["END"]
-		time.sleep(60)
+		LastCountBlocks = MyRPC.methodRPC(MyRPC.init_string_forRPC("getmininginfo"))
+		LastCountBlocks = LastCountBlocks["result"]["blocks"]
+		NewCountBlocks = LastCountBlocks
+		while NewCountBlocks <= LastCountBlocks:
+			NewCountBlocks = MyRPC.methodRPC(MyRPC.init_string_forRPC("getmininginfo"))
+			NewCountBlocks = NewCountBlocks["result"]["blocks"]
+			print COLORSBASH["WHITE"]+"Wait other blocks"+COLORSBASH["END"]
+			print NewCountBlocks,LastCountBlocks
+			time.sleep(30)
 		print COLORSBASH["PURPLE"]+"Set seek\n"+COLORSBASH["END"]
 		SetFseek(datfile)
 	 
