@@ -144,7 +144,7 @@ def AddBlock(dat):
     	cursor = tmpBase.query(LastBlockCount,())
 	LastBlock = 0
 	for (last) in cursor:
-	 LastBlock = int(last[0])+1
+	 LastBlock = int(last[0])
 	cursor.close()
 	for txs in tmp["Txs"]:
 	 tmptxs = txs.GetAllAsList()
@@ -167,5 +167,5 @@ def AddBlock(dat):
 	tmpBase.destruct()
 	tmpBase = None
 	block = None
-	print COLORSBASH["CYAN"]+"Added block #"+str(LastBlock-1)+COLORSBASH["END"]
+	print COLORSBASH["CYAN"]+"Added block #"+str(LastBlock)+COLORSBASH["END"]
 	return True
