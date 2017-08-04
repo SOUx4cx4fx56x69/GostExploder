@@ -64,6 +64,8 @@ class MySQL:
   return self.sql.cursor()
 
  def query(self,sql,params_list):
+  #if not params_list is tuple:
+ # print "Do query -> " + sql + " With param list " + str(params_list) 
   while True:
    try:
     cursor = self.sql.cursor()
