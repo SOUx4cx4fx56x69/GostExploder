@@ -71,8 +71,10 @@ def Thread(datfile):
 			print NewCountBlocks,LastCountBlocks
 			time.sleep(30)
 		print COLORSBASH["PURPLE"]+"Set seek\n"+COLORSBASH["END"]
+		path = datfile.name
+		datfile.close()
+		datfile = open(path,"rb+")
 		SetFseek(datfile)
-	 
 
 def InstallTables():
 	tmpBase = SQL.MySQL()
