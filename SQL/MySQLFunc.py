@@ -81,7 +81,7 @@ def InstallTables():
 
 	INSTALLING = []
 	INSTALLING.append("create table Blocks(id bigint(255) unsigned PRIMARY KEY AUTO_INCREMENT,     size int(255) unsigned,    version int(255) unsigned,            magic varchar(10),prevhash varchar(64),MerkleRoot varchar(64),Difficulty double unsigned,nonce int(255) unsigned,date varchar(24));");
-	INSTALLING.append('''create table Blocks_Transactions(id bigint(255) unsigned PRIMARY KEY AUTO_INCREMENT,
+	INSTALLING.append('''create table Blocks_Transactions(id bigint(255) unsigned,
 TxVersion int unsigned,
 Count_inputs bigint(255) unsigned,
 Count_outputs bigint(255) unsigned,
@@ -128,7 +128,7 @@ def AddBlock(dat):
 	);
 	'''
 	
-	BlocksTransactionsAdd = '''insert into Blocks_Transactions(TxVersion,Count_inputs,Count_outputs,locktime) values(%s,%s,%s,%s);'''
+	BlocksTransactionsAdd = '''insert into Blocks_Transactions(id,TxVersion,Count_inputs,Count_outputs,locktime) values(%s,%s,%s,%s,%s);'''
 	BlocksTransactionsInputAdd = '''insert into Blocks_Transactions_Input values(%s,%s,%s,%s,%s,%s);'''
 	BlocksTransactionsInputOutput = '''insert into Blocks_Transactions_Output values(%s,%s,%s,%s);'''
 	addLastSeek = '''update settings set conf_value='%s' where conf_name='lseek';'''
@@ -144,12 +144,12 @@ def AddBlock(dat):
     	cursor = tmpBase.query(LastBlockCount,())
 	LastBlock = 0
 	for (last) in cursor:
-	 LastBlock = last[0]-1
+	 LastBlock = int(last[0])+1
 	cursor.close()
 	for txs in tmp["Txs"]:
 	 tmptxs = txs.GetAllAsList()
 	 # Add bluh-bluh
-	 cursor = tmpBase.query(BlocksTransactionsAdd,(tmptxs["TxVersion"],tmptxs["TxInputs"],tmptxs["TxOutPuts"],tmptxs["TxLockTime"],))
+	 cursor = tmpBase.query(BlocksTransactionsAdd,(LastBlock,tmptxs["TxVersion"],tmptxs["TxInputs"],tmptxs["TxOutPuts"],tmptxs["TxLockTime"],))
 	 cursor.close()
 	 for i in tmptxs['TxInput']:
 	  t = i.GetAllAsList()	  
@@ -167,5 +167,5 @@ def AddBlock(dat):
 	tmpBase.destruct()
 	tmpBase = None
 	block = None
-	print COLORSBASH["CYAN"]+"Added block #"+str(LastBlock)+COLORSBASH["END"]
+	print COLORSBASH["CYAN"]+"Added block #"+str(LastBlock-1)+COLORSBASH["END"]
 	return True
