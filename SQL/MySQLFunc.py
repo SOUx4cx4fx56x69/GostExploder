@@ -43,6 +43,7 @@ def SetFseek(datfile):
 	tmpBase.destruct()
 	cursor = None
 	tmpBase = None
+
 def RPCInit(path="./configs/config.ini"):
 	config = ConfigParser()
 	config.read(path)
@@ -67,9 +68,8 @@ def Thread(datfile):
 		while NewCountBlocks <= LastCountBlocks:
 			NewCountBlocks = MyRPC.methodRPC(MyRPC.init_string_forRPC("getmininginfo"))
 			NewCountBlocks = NewCountBlocks["result"]["blocks"]
-			print COLORSBASH["WHITE"]+"Wait other blocks"+COLORSBASH["END"]
-			print NewCountBlocks,LastCountBlocks
-			time.sleep(30)
+			print COLORSBASH["WHITE"]+"...Wait other blocks.. blocks now -> "+str(NewCountBlocks)+COLORSBASH["END"]
+			time.sleep(5)
 		print COLORSBASH["PURPLE"]+"Set seek\n"+COLORSBASH["END"]
 		path = datfile.name
 		datfile.close()
@@ -78,7 +78,7 @@ def Thread(datfile):
 
 def InstallTables():
 	tmpBase = SQL.MySQL()
-
+	print "Adding block"
 	INSTALLING = []
 	INSTALLING.append("create table Blocks(id bigint(255) unsigned PRIMARY KEY AUTO_INCREMENT,     size int(255) unsigned,    version int(255) unsigned,            magic varchar(10),prevhash varchar(64),MerkleRoot varchar(64),Difficulty double unsigned,nonce int(255) unsigned,date varchar(24));");
 	INSTALLING.append('''create table Blocks_Transactions(id bigint(255) unsigned,
@@ -119,51 +119,61 @@ def AddBlock(dat):
 	if block == False:
 	 tmpBase.destruct()
 	 return False
-	tmpBase = SQL.MySQL()
-
+############################################################################################################
 	BlocksAdd = '''
 	insert into Blocks(size,version,magic,prevhash,MerkleRoot,Difficulty,nonce,date) values
 	(
 	%s,%s,%s,%s,%s,%s,%s,%s
 	);
 	'''
-	
 	BlocksTransactionsAdd = '''insert into Blocks_Transactions(id,TxVersion,Count_inputs,Count_outputs,locktime) values(%s,%s,%s,%s,%s);'''
 	BlocksTransactionsInputAdd = '''insert into Blocks_Transactions_Input values(%s,%s,%s,%s,%s,%s);'''
 	BlocksTransactionsInputOutput = '''insert into Blocks_Transactions_Output values(%s,%s,%s,%s);'''
 	addLastSeek = '''update settings set conf_value='%s' where conf_name='lseek';'''
 	LastBlockCount = '''SELECT COUNT(*) as last from Blocks;'''
+############################################################################################################
+	tmpBase = SQL.MySQL()
 	tmp = block.ReturnAllToList()
 	if tmp == False or tmp['BlockSize'] ==0 or tmp["BlockHeader"]['version']==0:
 		cursor = tmpBase.query(addLastSeek,(dat.tell(),))
 		cursor.close()
+		tmpBase.destruct()
 		return False
 	
 	cursor = tmpBase.query(BlocksAdd,(tmp['BlockSize'],tmp["BlockHeader"]['version'],tmp["Magic"],tmp["BlockHeader"]['previousHash'],tmp['BlockHeader']['merkleRoot'],bh.GetDiff(tmp["BlockHeader"]['nbits']),tmp["BlockHeader"]['nonce'],datetime.utcfromtimestamp(tmp["BlockHeader"]['ntime']).strftime('%Y.%m.%d %H:%M:%S GMT0'),))
 	cursor.close()
+	#print "I add a block"
     	cursor = tmpBase.query(LastBlockCount,())
 	LastBlock = 0
 	for (last) in cursor:
 	 LastBlock = int(last[0])
 	cursor.close()
+	#print "I get index of last added block"
 	for txs in tmp["Txs"]:
 	 tmptxs = txs.GetAllAsList()
 	 # Add bluh-bluh
 	 cursor = tmpBase.query(BlocksTransactionsAdd,(LastBlock,tmptxs["TxVersion"],tmptxs["TxInputs"],tmptxs["TxOutPuts"],tmptxs["TxLockTime"],))
 	 cursor.close()
-	 for i in tmptxs['TxInput']:
+	 tmpBase.commit()
+	#print "Transactions"
+	for i in tmptxs['TxInput']:
 	  t = i.GetAllAsList()	  
 	  scriptSig = base64.b64encode(t['scriptSig'])
 	  cursor = tmpBase.query(BlocksTransactionsInputAdd,(LastBlock,t['txOutId'],t['seqNo'],bh.hashstr(t['PrevHash']),scriptSig,t['scriptLen'],))
 	  cursor.close()
-	 for i in tmptxs['TxOutputs']:
+	  tmpBase.commit()
+	#print "Transactions input"
+	for i in tmptxs['TxOutputs']:
 	  t = i.GetAllAsList()
 	  cursor = tmpBase.query(BlocksTransactionsInputOutput,(LastBlock,bh.hashstr(t['pubkey']),bh.FromSatToFull(t['value']),t['scriptLen'],))
 	  cursor.close()	
+	  tmpBase.commit()
+	#print "Transactions Output"
 	cursor = tmpBase.query(addLastSeek,(dat.tell(),))
 	cursor.close()
-	cursor=None
+	#print "Add last seek"
 	tmpBase.commit()
+	cursor=None
 	tmpBase.destruct()
 	tmpBase = None
 	block = None
