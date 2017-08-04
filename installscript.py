@@ -33,7 +33,7 @@ def getRPCParams(path):
 	gc.close()
 	return {"user":gcl['user'],"pass":gcl['pass']}
 
-def SetConfig(mh,mp,mu,mpas,md,dp,gc,path="./config.ini"):
+def SetConfig(mh,mp,mu,mpas,md,dp,gc,path="./tmpconfig.ini"):
 	config = ConfigParser()
 	config.read(path)
 	config.add_section("MySQL")
@@ -74,7 +74,7 @@ print COLORSBASH["END"]
 SetConfig(MySQLHost,MySQLPort,MySQLUser,MySQLPass,MySQLDB,DatPath,GostConf)
 Put = SettingSet(COLORSBASH["GREEN"]+"Config file ended, put that to configs?","y")
 if Put == "y":
-	copyfile("./config.ini", "./configs/config.ini")
+	copyfile("./tmpconfig.ini", "./configs/config.ini")
 	print "Okey, i put:)"
 	print COLORSBASH["END"]
 else:
