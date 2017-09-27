@@ -63,7 +63,7 @@ class MySQL:
  def cursor(self):
   return self.sql.cursor()
 
- def query(self,sql,params_list):
+ def query(self,sql,params_list,IngoreError=True):
   #if not params_list is tuple:
  # print "Do query -> " + sql + " With param list " + str(params_list) 
   while True:
@@ -75,12 +75,21 @@ class MySQL:
     self.destruct()
     print "SQL error(query): "+str(e)+"\n Try new..."
     self.connect_restart() 
+    if IngoreError:
+     break
    
 #for (first_name, last_name, hire_date) in cursor:
 #  print("{}, {} was hired on {:%d %b %Y}".format(
 #    last_name, first_name, hire_date))
- def __init__(self,file="config.ini"):
-  self.init_sql(file)
+ def __init__(self,file="config.ini",user=None,passwrd=None,host="127.0.0.1",port=3306,database="mysql"):
+  if user != None and passwrd != None:
+   self.host=host
+   self.port=port
+   self.user=user
+   self.password=passwrd
+   self.database=database
+  else:
+   self.init_sql(file)
   self.connect()
   
   atexit.register(self.destruct)
