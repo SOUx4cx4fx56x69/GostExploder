@@ -2,6 +2,7 @@ from configparser import ConfigParser
 from colors import *
 import getpass
 from shutil import copyfile
+import SQL.MYSQL as SQL
 
 print COLORSBASH["GREEN"]+"Start installing...."+COLORSBASH["END"]
 print COLORSBASH["BROWN"]+"Set MySQL"
@@ -58,12 +59,34 @@ def SetConfig(mh,mp,mu,mpas,md,dp,gc,path="./tmpconfig.ini"):
 	
 
 UserName = getpass.getuser()
-
 MySQLHost = SettingSet("Write your Host of MySQL","127.0.0.1")
 MySQLPort = SettingSet("Write your Port of MySQL","3306")
-MySQLUser = SettingSet("Write your User of MySQL","root")
-MySQLPass = SettingSet("Write your Password of user of MySQL","root")
-MySQLDB = SettingSet("Write your database of MySQL","Explorer")
+
+MySQLUser = ""
+MySQLPass = ""
+MySQLDB = ""
+
+InstallDatabase = ""
+while InstallDatabase != "n" and InstallDatabase != "y":
+ InstallDatabase = SettingSet("You are want install database with this script?","n")
+
+if InstallDatabase == "y":
+ 
+ ROOT_USER = SettingSet("Write your ROOT user of MySQL","root")
+ ROOT_PASS = SettingSet("Write your ROOT password of MySQL","")
+ MySQLUser = SettingSet("Write your User for Explorer","Explorer")
+ MySQLPass = SettingSet("Write your Password of user for Explorer","Explorer")
+ MySQLDB = SettingSet("Write your database for Explorer","Explorer")
+ bd = SQL.MySQL(user=ROOT_USER,passwrd=ROOT_PASS,host=MySQLHost,port=MySQLPort)
+ bd.query("create database `%s`;" % (MySQLDB),(),IngoreError=True)
+ bd.query("create user `%s`@'localhost' identified by '%s';" % (MySQLUser,MySQLPass),(),IngoreError=True)
+ bd.query("grant all privileges on `%s`.* to `%s`@'localhost';" % (MySQLDB,MySQLUser),(),IngoreError=True);
+ #cursor.close()
+ #bd.destruct()
+else: 
+ MySQLUser = SettingSet("Write your User of MySQL","root")
+ MySQLPass = SettingSet("Write your Password of user of MySQL","root")
+ MySQLDB = SettingSet("Write your database of MySQL","Explorer")
 
 DatPath = SettingSet("Write your path to dat file","/home/"+UserName+"/.gostcoin/blocks/blk00000.dat")
 GostConf = SettingSet("Write your path to path conf of gostcoin","/home/"+UserName+"/.gostcoin/gostcoin.conf")
