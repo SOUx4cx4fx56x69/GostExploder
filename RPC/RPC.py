@@ -24,7 +24,7 @@ class RPC:
   if inJson:
    string = string.split("\n")
    i = 0
-   maxi = len(string)
+   maxi = len(string) - 1
    while string[i][0] != '{' and i < maxi:
     i = i+1
    if i == maxi:
