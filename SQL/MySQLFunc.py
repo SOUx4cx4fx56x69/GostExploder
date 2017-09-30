@@ -57,7 +57,7 @@ def GetLastBlock():
  MyRPC = RPCInit()
  LastCountBlocks = MyRPC.methodRPC(MyRPC.init_string_forRPC("getmininginfo"))
  if LastCountBlocks == False: 
-  raise ValueError(COLORSBASH["RED"]+"ERROR WITH RPC. Change RPC settings in ./configs/config.ini!"+COLORSBASH["END"])
+  raise ValueError(COLORSBASH["RED"]+"ERROR WITH RPC(maybe rpcuser/rpcpassword uncorrect). Change RPC settings in ./configs/config.ini!"+COLORSBASH["END"])
  return LastCountBlocks["result"]["blocks"]
 
 def Thread(datfile):
