@@ -53,21 +53,24 @@ def RPCInit(path="./configs/config.ini"):
 	Pass = config.get('RPC','password')
 	MyRPC = RPC.RPC(Host,Port,User,Pass)
 	return MyRPC
+def GetLastBlock():
+ MyRPC = RPCInit()
+ LastCountBlocks = MyRPC.methodRPC(MyRPC.init_string_forRPC("getmininginfo"))
+ if LastCountBlocks == False: 
+  raise ValueError(COLORSBASH["RED"]+"ERROR WITH RPC. Change RPC settings in ./configs/config.ini!"+COLORSBASH["END"])
+ return LastCountBlocks["result"]["blocks"]
 
 def Thread(datfile):
 	signal.signal(signal.SIGUSR1,CloseThreads)
 	global ClosedThreads
-	MyRPC = RPCInit()
 	SetFseek(datfile)
 	while not ClosedThreads:
 	 if ReadingDat(datfile) == False:
 		print COLORSBASH["GREEN"]+"Synchroned!"+COLORSBASH["END"]
-		LastCountBlocks = MyRPC.methodRPC(MyRPC.init_string_forRPC("getmininginfo"))
-		LastCountBlocks = LastCountBlocks["result"]["blocks"]
+		LastCountBlocks = GetLastBlock()
 		NewCountBlocks = LastCountBlocks
 		while NewCountBlocks <= LastCountBlocks:
-			NewCountBlocks = MyRPC.methodRPC(MyRPC.init_string_forRPC("getmininginfo"))
-			NewCountBlocks = NewCountBlocks["result"]["blocks"]
+			NewCountBlocks = GetLastBlock()
 			print COLORSBASH["WHITE"]+"...Wait other blocks.. blocks now -> "+str(NewCountBlocks)+COLORSBASH["END"]
 			time.sleep(5)
 		print COLORSBASH["PURPLE"]+"Set seek\n"+COLORSBASH["END"]

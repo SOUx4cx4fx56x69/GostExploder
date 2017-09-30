@@ -24,18 +24,15 @@ class RPC:
   if inJson:
    string = string.split("\n")
    i = 0
-   maxi = len(string) - 1
+   maxi = len(string)
    while string[i][0] != '{' and i < maxi:
     i = i+1
-   if i == maxi:
-    return None
+    if i == maxi:
+     return False
    string = json.loads(string[i])
-   return string
-  else:
    return string
   
  def __init__(self,rpcAdress,rpcPort,rpcUser,rpcPass):
   self.RPCauth = base64.b64encode(str(rpcUser)+":"+str(rpcPass))
   self.RPCAddr = rpcAdress
   self.RPCport = rpcPort
-
